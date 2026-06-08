@@ -4,6 +4,6 @@
   "private": true,
   "dependencies": {
     "cloudinary": "^1.41.3",
-    "formidable": "^3.5.1"
+    "busboy": "^1.6.0"
   }
 }

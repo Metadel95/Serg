@@ -1,7 +1,9 @@
 // api/upload.js — Vercel Serverless Function
+// Uses busboy to parse multipart (avoids formidable serverless issues)
+// then streams directly to Cloudinary — no temp file needed
+
 const cloudinary = require('cloudinary').v2
-const { IncomingForm } = require('formidable')
-const { createReadStream } = require('fs')
+const Busboy = require('busboy')
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -15,22 +17,38 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const form = new IncomingForm({ maxFileSize: 15 * 1024 * 1024, keepExtensions: true })
-
-  let files
-  try {
-    ;[, files] = await new Promise((resolve, reject) => {
-      form.parse(req, (err, f, fi) => err ? reject(err) : resolve([f, fi]))
-    })
-  } catch {
-    return res.status(400).json({ error: 'Could not parse upload' })
+  // Verify Cloudinary is configured
+  if (!process.env.CLOUDINARY_CLOUD_NAME) {
+    console.error('Missing CLOUDINARY_CLOUD_NAME env var')
+    return res.status(500).json({ error: 'Server not configured. Contact the admin.' })
   }
 
-  const photoFile = Array.isArray(files.photo) ? files.photo[0] : files.photo
-  if (!photoFile) return res.status(400).json({ error: 'No photo file provided' })
+  return new Promise((resolve) => {
+    let settled = false
+    const done = (statusCode, body) => {
+      if (settled) return
+      settled = true
+      res.status(statusCode).json(body)
+      resolve()
+    }
 
-  try {
-    const uploadResult = await new Promise((resolve, reject) => {
+    let busboy
+    try {
+      busboy = Busboy({
+        headers: req.headers,
+        limits: { fileSize: 15 * 1024 * 1024 }, // 15MB max
+      })
+    } catch (err) {
+      console.error('Busboy init error:', err)
+      return done(400, { error: 'Invalid request format' })
+    }
+
+    let fileReceived = false
+
+    busboy.on('file', (_fieldname, fileStream, _info) => {
+      fileReceived = true
+
+      // Stream directly from busboy → Cloudinary (no disk write)
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'wedding-sarah-james-2025',
@@ -38,17 +56,35 @@ module.exports = async function handler(req, res) {
           transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
           tags: ['wedding', 'guest-upload'],
         },
-        (err, result) => err ? reject(err) : resolve(result)
+        (err, result) => {
+          if (err) {
+            console.error('Cloudinary error:', err)
+            return done(500, { error: 'Upload to cloud failed. Please try again.' })
+          }
+          done(200, { url: result.secure_url, publicId: result.public_id })
+        }
       )
-      createReadStream(photoFile.filepath).pipe(uploadStream)
+
+      fileStream.on('error', (err) => {
+        console.error('File stream error:', err)
+        uploadStream.destroy(err)
+        done(500, { error: 'File read error. Please try again.' })
+      })
+
+      fileStream.pipe(uploadStream)
     })
 
-    return res.status(200).json({
-      url: uploadResult.secure_url,
-      publicId: uploadResult.public_id,
+    busboy.on('finish', () => {
+      if (!fileReceived) {
+        done(400, { error: 'No photo file found in request.' })
+      }
     })
-  } catch (err) {
-    console.error('Cloudinary upload error:', err)
-    return res.status(500).json({ error: 'Upload failed. Please try again.' })
-  }
+
+    busboy.on('error', (err) => {
+      console.error('Busboy error:', err)
+      done(500, { error: 'Could not read upload. Please try again.' })
+    })
+
+    req.pipe(busboy)
+  })
 }
