@@ -1,0 +1,438 @@
+/* ── App Shell ── */
+.app {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+}
+
+/* ── Screens ── */
+.screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+/* ── Home Screen ── */
+.screen-home {
+  justify-content: space-between;
+  padding: 3.5rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(212, 185, 150, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 90%, rgba(184, 151, 122, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.home-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.home-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.ornament {
+  display: block;
+}
+
+.home-names {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05em;
+  letter-spacing: 0.02em;
+}
+
+.home-names .ampersand {
+  font-style: italic;
+  font-size: 0.55em;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+  margin: -0.15em 0;
+}
+
+.home-date {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.home-subtitle {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.8;
+  max-width: 280px;
+}
+
+/* ── Counter Badge ── */
+.counter-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border: 1px solid var(--beige-mid);
+  border-radius: 50px;
+  padding: 12px 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.counter-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--beige-dark);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.dot.filled {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.counter-text {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: var(--text-dark);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 50px;
+  transition: all var(--transition);
+  box-shadow: 0 4px 24px rgba(44, 36, 32, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--gold);
+  box-shadow: 0 6px 32px rgba(184, 151, 122, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text-mid);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--beige-dark);
+  border-radius: 50px;
+  transition: all var(--transition);
+}
+
+.btn-secondary:hover {
+  background: var(--beige);
+  border-color: var(--gold-light);
+  color: var(--text-dark);
+}
+
+.btn-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 10;
+}
+
+.btn-close:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* ── Camera Screen ── */
+.screen-camera {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  padding: 0;
+  z-index: 100;
+}
+
+.camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 3rem;
+}
+
+.camera-frame {
+  position: absolute;
+  inset: 10%;
+  pointer-events: none;
+}
+
+.frame-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: rgba(255,255,255,0.5);
+  border-style: solid;
+}
+
+.tl { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+.tr { top: 0; right: 0; border-width: 1.5px 1.5px 0 0; }
+.bl { bottom: 0; left: 0; border-width: 0 0 1.5px 1.5px; }
+.br { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+
+.btn-shutter {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: 2.5px solid rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-shutter:active {
+  transform: scale(0.92);
+}
+
+.shutter-inner {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: white;
+  transition: all 0.15s ease;
+}
+
+.btn-shutter:active .shutter-inner {
+  background: rgba(255,255,255,0.7);
+}
+
+/* ── Preview Screen ── */
+.screen-preview {
+  background: var(--cream);
+  padding: 1.5rem;
+}
+
+.preview-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.preview-img {
+  width: 100%;
+  max-height: 55svh;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-label {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text-mid);
+  letter-spacing: 0.05em;
+}
+
+.preview-count {
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── Status Screens ── */
+.screen-status {
+  padding: 2rem;
+}
+
+.status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  background: var(--white);
+  border: 1px solid var(--beige-mid);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  max-width: 360px;
+  width: 100%;
+}
+
+.spinner {
+  animation: spinSlow 1s linear infinite;
+}
+
+.success-icon {
+  font-size: 2.5rem;
+  color: var(--gold);
+  animation: heartbeat 1.5s ease infinite;
+}
+
+.status-title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 300;
+  color: var(--text-dark);
+}
+
+.status-sub {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+}
+
+/* ── Limit Screen ── */
+.limit-icon {
+  font-size: 2rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+}
+
+.limit-note {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+
+/* ── Footer ── */
+.home-footer {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-light);
+  padding-top: 1rem;
+  letter-spacing: 0.05em;
+}
+
+/* ── Error ── */
+.error-msg {
+  font-size: 0.78rem;
+  color: #c0392b;
+  background: #fdf0ee;
+  border: 1px solid #f5c6c2;
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-align: center;
+  max-width: 320px;
+}
+
+/* ── Desktop adjustments ── */
+@media (min-width: 600px) {
+  .screen-home { padding: 4rem 3rem; }
+  .home-inner { gap: 1.5rem; }
+}
