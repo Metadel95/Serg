@@ -51,7 +51,7 @@ export default function Admin() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'sarah-james-wedding-photos.zip'
+      a.download = 'Mekbeb-Nebyat-wedding-photos.zip'
       a.click()
       URL.revokeObjectURL(url)
     } catch {
@@ -76,7 +76,7 @@ export default function Admin() {
         <div className="login-card">
           <div className="login-ornament">✦</div>
           <h1 className="login-title">Admin Dashboard</h1>
-          <p className="login-sub">Sarah &amp; James · June 14, 2025</p>
+          <p className="login-sub">Mekbeb &amp; Nebyat · November 14, 2026</p>
           <div className="login-field">
             <input
               type="password"
@@ -124,7 +124,7 @@ export default function Admin() {
 
       <div className="admin-header">
         <div>
-          <h1 className="admin-title">Sarah &amp; James</h1>
+          <h1 className="admin-title">Mekbeb &amp; Nebyat</h1>
           <p className="admin-sub">Wedding Photos · June 14, 2025</p>
         </div>
         <div className="admin-actions">
