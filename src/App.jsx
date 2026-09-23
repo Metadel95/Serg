@@ -22,7 +22,7 @@ const FUN_MESSAGES = [
   { emoji: "🔥", title: "That's a keeper!", sub: "Seriously good stuff." },
   { emoji: "✨", title: "Magic captured!", sub: "This is what memories are made of." },
   { emoji: "💫", title: "Nailed it!", sub: "The album is getting better and better." },
-  { emoji: "🎊", title: "Beautiful!", sub: "Sarah & James will treasure this." },
+  { emoji: "🎊", title: "Beautiful!", sub: "Mekbeb & Nebyat will treasure this." },
 ]
 
 const SCREEN = {
@@ -199,7 +199,7 @@ export default function App() {
           <div className={`welcome-content ${welcomeStep >= 1 ? 'visible' : ''}`}>
             <div className={`welcome-ring ${welcomeStep >= 1 ? 'pop' : ''}`}>💍</div>
             <h1 className={`welcome-names ${welcomeStep >= 2 ? 'visible' : ''}`}>
-              Sarah <span>&amp;</span> James
+              Mekbeb <span>&amp;</span> Nebyat
             </h1>
             <p className={`welcome-date ${welcomeStep >= 2 ? 'visible' : ''}`}>
               June 14, 2025
@@ -223,7 +223,7 @@ export default function App() {
 
           {/* Top bar */}
           <div className="top-bar fade-up fade-up-1">
-            <div className="top-names">Sarah &amp; James</div>
+            <div className="top-names">Mekbeb &amp; Nebyat</div>
             <div className="top-date">June 14, 2025</div>
           </div>
 
@@ -321,7 +321,7 @@ export default function App() {
 
             <div className="preview-header fade-up fade-up-1">
               <p className="preview-eyebrow">📷 Preview your shot</p>
-              <p className="preview-sub">Happy with it? Share it with Sarah &amp; James!</p>
+              <p className="preview-sub">Happy with it? Share it with Mekbeb &amp; Nebyat!</p>
             </div>
 
             <div className="preview-photo-wrap fade-up fade-up-2">
@@ -400,7 +400,7 @@ export default function App() {
             <div className="limit-emoji">🎊</div>
             <Ornament />
             <h2 className="limit-title">You're a legend!</h2>
-            <p className="limit-sub">Sarah &amp; James · June 14, 2025</p>
+            <p className="limit-sub">Mekbeb &amp; Nebyat · June 14, 2025</p>
             <p className="limit-body">
               You used all <strong>{MAX_UPLOADS} photos</strong> — thank you so much!
               Your memories are now safely in the couple's collection. 💛
