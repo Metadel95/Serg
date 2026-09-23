@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const result = await cloudinary.search
-      .expression('folder:wedding-sarah-james-2025 AND tags=guest-upload')
+      .expression('folder:wedding-Mekbeb-Nebyat-2025 AND tags=guest-upload')
       .sort_by('created_at', 'desc')
       .max_results(500)
       .execute()
