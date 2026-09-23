@@ -202,7 +202,7 @@ export default function App() {
               Mekbeb <span>&amp;</span> Nebyat
             </h1>
             <p className={`welcome-date ${welcomeStep >= 2 ? 'visible' : ''}`}>
-              June 14, 2025
+              November 14, 2026
             </p>
             <p className={`welcome-invite ${welcomeStep >= 3 ? 'visible' : ''}`}>
               You're officially a wedding photographer today 📷
@@ -224,7 +224,7 @@ export default function App() {
           {/* Top bar */}
           <div className="top-bar fade-up fade-up-1">
             <div className="top-names">Mekbeb &amp; Nebyat</div>
-            <div className="top-date">June 14, 2025</div>
+            <div className="top-date">November 14, 2026</div>
           </div>
 
           {/* Main card */}
@@ -400,7 +400,7 @@ export default function App() {
             <div className="limit-emoji">🎊</div>
             <Ornament />
             <h2 className="limit-title">You're a legend!</h2>
-            <p className="limit-sub">Mekbeb &amp; Nebyat · June 14, 2025</p>
+            <p className="limit-sub">Mekbeb &amp; Nebyat · November 14, 2026</p>
             <p className="limit-body">
               You used all <strong>{MAX_UPLOADS} photos</strong> — thank you so much!
               Your memories are now safely in the couple's collection. 💛
