@@ -51,7 +51,7 @@ module.exports = async function handler(req, res) {
       // Stream directly from busboy → Cloudinary (no disk write)
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: 'wedding-sarah-james-2025',
+          folder: 'wedding-Mekbeb-Nebyat-2025',
           resource_type: 'image',
           transformation: [{ quality: 'auto:good', fetch_format: 'auto' }],
           tags: ['wedding', 'guest-upload'],
