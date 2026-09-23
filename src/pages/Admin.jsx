@@ -125,7 +125,7 @@ export default function Admin() {
       <div className="admin-header">
         <div>
           <h1 className="admin-title">Mekbeb &amp; Nebyat</h1>
-          <p className="admin-sub">Wedding Photos · June 14, 2025</p>
+          <p className="admin-sub">Wedding Photos · November 14, 2026</p>
         </div>
         <div className="admin-actions">
           <button className="btn-refresh" onClick={fetchPhotos}>
