@@ -51,25 +51,6 @@ const Spinner = () => (
     <path d="M16 3 a13 13 0 0 1 13 13" stroke="#B8977A" strokeWidth="2.5" strokeLinecap="round"/>
   </svg>
 )
-
-// Downscale big gallery photos so they fit Vercel's ~4.5MB body limit
-const compressImage = (file, maxDim = 2400, quality = 0.85) =>
-  new Promise((resolve) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      const scale = Math.min(1, maxDim / Math.max(img.width, img.height))
-      const canvas = document.createElement('canvas')
-      canvas.width = Math.round(img.width * scale)
-      canvas.height = Math.round(img.height * scale)
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
-      URL.revokeObjectURL(url)
-      canvas.toBlob((blob) => resolve(blob || file), 'image/jpeg', quality)
-    }
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
-    img.src = url
-  })
-
 // Animated film strip counter
 const FilmStrip = ({ count, max }) => (
   <div className="film-strip">
@@ -97,7 +78,6 @@ export default function App() {
   const streamRef = useRef(null)
   const fileInputRef = useRef(null)
   const canvasRef = useRef(null)
-  const galleryInputRef = useRef(null)
 
   const stopStream = useCallback(() => {
     if (streamRef.current) {
@@ -163,7 +143,7 @@ export default function App() {
     reader.readAsDataURL(file)
     e.target.value = ''
   }
-  
+
   const capturePhoto = () => {
     const video = videoRef.current
     const canvas = canvasRef.current
@@ -210,8 +190,6 @@ export default function App() {
     <div className="app">
       <input ref={fileInputRef} type="file" accept="image/*" capture="environment"
         onChange={handleFileChange} style={{ display: 'none' }} />
-      <input ref={galleryInputRef} type="file" accept="image/*"
-        onChange={handleGalleryChange} style={{ display: 'none' }} />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
       {/* ══ WELCOME SCREEN ══ */}
@@ -280,11 +258,6 @@ export default function App() {
             <button className="btn-camera" onClick={openCamera}>
               <CameraIcon />
               <span>Take a Photo</span>
-            </button>
-
-            <button className="btn-gallery" onClick={openGallery}>
-              <GalleryIcon />
-              <span>Upload from Gallery</span>
             </button>
           </div>
 
@@ -408,10 +381,6 @@ export default function App() {
               <button className="btn-camera" onClick={() => { setCapturedImage(null); setScreen(SCREEN.HOME) }}>
                 <CameraIcon /> Take another!
               </button>
-
-              <button className="btn-gallery" onClick={openGallery}>
-                <GalleryIcon /> Upload from gallery
-              </button>
             </div>
 
             <p className="success-note">
@@ -473,12 +442,5 @@ const RetakeIcon = () => (
 const CloseIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-)
-const GalleryIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="2"/>
-    <circle cx="8.5" cy="8.5" r="1.5"/>
-    <polyline points="21 15 16 10 5 21"/>
   </svg>
 )
