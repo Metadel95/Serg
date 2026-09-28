@@ -289,31 +289,7 @@
 }
 
 .btn-camera:active { transform: translateY(0); }
-/* Gallery button (secondary) */
-.btn-gallery {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: calc(100% - 3rem);
-  margin: -0.5rem 1.5rem 1.5rem;
-  padding: 16px;
-  background: var(--white);
-  color: var(--text-mid);
-  border: 1.5px solid var(--beige-dark);
-  border-radius: 14px;
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
 
-.btn-gallery:hover { background: var(--beige); border-color: var(--gold); color: var(--text-dark); }
-
-.success-actions { display: flex; flex-direction: column; gap: 10px; }
-.success-actions .btn-gallery { width: 100%; margin: 0; }
 
 /* How it works */
 .how-it-works {
