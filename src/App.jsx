@@ -281,7 +281,7 @@ export default function App() {
               <CameraIcon />
               <span>Take a Photo</span>
             </button>
-            
+
             <button className="btn-gallery" onClick={openGallery}>
               <GalleryIcon />
               <span>Upload from Gallery</span>
@@ -474,11 +474,11 @@ const CloseIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
+)
 const GalleryIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2"/>
     <circle cx="8.5" cy="8.5" r="1.5"/>
     <polyline points="21 15 16 10 5 21"/>
   </svg>
-)
 )
