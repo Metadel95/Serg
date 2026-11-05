@@ -25,6 +25,44 @@ const FUN_MESSAGES = [
   { emoji: "🎊", title: "Beautiful!", sub: "Mekbeb & Nebyat will treasure this." },
 ]
 
+// Cloudinary free plan rejects images over 10MB or 25 megapixels
+const MAX_BYTES = 10 * 1024 * 1024
+const MAX_PIXELS = 25_000_000
+
+// Returns the original file untouched unless it exceeds the plan limits;
+// only then is it scaled down (as little as needed) and re-encoded.
+async function fitCloudinaryLimits(file) {
+  let img
+  try {
+    img = await new Promise((resolve, reject) => {
+      const el = new Image()
+      const url = URL.createObjectURL(file)
+      el.onload = () => { URL.revokeObjectURL(url); resolve(el) }
+      el.onerror = () => { URL.revokeObjectURL(url); reject() }
+      el.src = url
+    })
+  } catch {
+    return file // browser can't decode it (e.g. HEIC on some Androids) — let Cloudinary handle it
+  }
+
+  const pixels = img.naturalWidth * img.naturalHeight
+  if (file.size <= MAX_BYTES && pixels <= MAX_PIXELS) return file
+
+  let scale = Math.min(1, Math.sqrt((MAX_PIXELS * 0.98) / pixels))
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(img.naturalWidth * scale)
+    canvas.height = Math.round(img.naturalHeight * scale)
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.95))
+    if (blob && blob.size <= MAX_BYTES) {
+      return new File([blob], 'wedding-moment.jpg', { type: 'image/jpeg' })
+    }
+    scale *= 0.85
+  }
+  return file
+}
+
 const SCREEN = {
   WELCOME: 'welcome',
   HOME: 'home',
@@ -77,6 +115,7 @@ export default function App() {
   const videoRef = useRef(null)
   const streamRef = useRef(null)
   const fileInputRef = useRef(null)
+  const galleryInputRef = useRef(null)
   const canvasRef = useRef(null)
 
   const stopStream = useCallback(() => {
@@ -132,9 +171,20 @@ export default function App() {
     }
   }
 
+  const openGallery = () => {
+    if (uploadCount >= MAX_UPLOADS) { setScreen(SCREEN.LIMIT); return }
+    setError(null)
+    galleryInputRef.current?.click()
+  }
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (file.type && !file.type.startsWith('image/')) {
+      setError('Please choose a photo (image file).')
+      e.target.value = ''
+      return
+    }
     const reader = new FileReader()
     reader.onload = (ev) => {
       setCapturedImage({ dataUrl: ev.target.result, blob: file })
@@ -162,12 +212,32 @@ export default function App() {
     if (!capturedImage) return
     setScreen(SCREEN.UPLOADING)
     setError(null)
-    const formData = new FormData()
-    formData.append('photo', capturedImage.blob, 'wedding-moment.jpg')
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      // 1. Get a signed upload permission from our API (tiny request)
+      const signRes = await fetch('/api/upload', { method: 'POST' })
+      const sig = await signRes.json()
+      if (!signRes.ok) throw new Error(sig.error || 'Upload failed')
+
+      // 2. Only shrink if Cloudinary's free-plan limits would reject it
+      const file = await fitCloudinaryLimits(capturedImage.blob)
+
+      // 3. Send the photo straight to Cloudinary at full quality
+      const formData = new FormData()
+      formData.append('file', file, file.name || 'wedding-moment.jpg')
+      formData.append('api_key', sig.apiKey)
+      formData.append('timestamp', sig.timestamp)
+      formData.append('signature', sig.signature)
+      formData.append('folder', sig.folder)
+      formData.append('tags', sig.tags)
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData,
+      })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      if (!res.ok) {
+        console.error('Cloudinary error:', data)
+        throw new Error('Upload to cloud failed. Please try again.')
+      }
       const newCount = uploadCount + 1
       setUploadCount(newCount)
       localStorage.setItem(STORAGE_KEY, String(newCount))
@@ -189,6 +259,8 @@ export default function App() {
   return (
     <div className="app">
       <input ref={fileInputRef} type="file" accept="image/*" capture="environment"
+        onChange={handleFileChange} style={{ display: 'none' }} />
+      <input ref={galleryInputRef} type="file" accept="image/*"
         onChange={handleFileChange} style={{ display: 'none' }} />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
@@ -259,6 +331,10 @@ export default function App() {
               <CameraIcon />
               <span>Take a Photo</span>
             </button>
+            <button className="btn-gallery" onClick={openGallery}>
+              <GalleryIcon />
+              <span>Upload from Gallery</span>
+            </button>
           </div>
 
           {/* How it works */}
@@ -267,12 +343,12 @@ export default function App() {
             <div className="steps">
               <div className="step">
                 <div className="step-num">1</div>
-                <div className="step-text">Tap the button above to open your camera</div>
+                <div className="step-text">Take a photo, or pick one from your gallery</div>
               </div>
               <div className="step-arrow">↓</div>
               <div className="step">
                 <div className="step-num">2</div>
-                <div className="step-text">Take your shot and preview it</div>
+                <div className="step-text">Preview your shot</div>
               </div>
               <div className="step-arrow">↓</div>
               <div className="step">
@@ -381,6 +457,9 @@ export default function App() {
               <button className="btn-camera" onClick={() => { setCapturedImage(null); setScreen(SCREEN.HOME) }}>
                 <CameraIcon /> Take another!
               </button>
+              <button className="btn-gallery" onClick={openGallery}>
+                <GalleryIcon /> Upload from Gallery
+              </button>
             </div>
 
             <p className="success-note">
@@ -427,6 +506,13 @@ const CameraIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
     <circle cx="12" cy="13" r="4"/>
+  </svg>
+)
+const GalleryIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <circle cx="8.5" cy="8.5" r="1.5"/>
+    <polyline points="21 15 16 10 5 21"/>
   </svg>
 )
 const HeartIcon = () => (
