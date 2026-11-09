@@ -21,9 +21,17 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Server not configured. Contact the admin.' })
   }
 
+  // The app gives each photo a unique id. Using it as the public_id with
+  // overwrite=false means a photo retried after a dropped connection is
+  // recognised by Cloudinary instead of being stored twice.
+  const publicId = req.body && req.body.publicId
+  if (typeof publicId !== 'string' || !/^[a-z0-9-]{8,64}$/.test(publicId)) {
+    return res.status(400).json({ error: 'Invalid photo id' })
+  }
+
   const timestamp = Math.round(Date.now() / 1000)
   // Every param sent to Cloudinary (except file, api_key, signature) must be signed
-  const params = { folder: FOLDER, tags: TAGS, timestamp }
+  const params = { folder: FOLDER, overwrite: 'false', public_id: publicId, tags: TAGS, timestamp }
   const signature = cloudinary.utils.api_sign_request(params, CLOUDINARY_API_SECRET)
 
   return res.status(200).json({
